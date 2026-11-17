@@ -2,7 +2,7 @@
 
 Site estático com a apresentação, os cases e o contato de Luis Guilherme Passos Ramos. Feito com Astro 7, TypeScript, SVG e CSS, para publicação no GitHub Pages.
 
-- Endereço previsto: https://luispassosramos.github.io/LuisPortifolio/
+- **Acesse o portfólio publicado:** [luispassosramos.github.io/LuisPortifolio](https://luispassosramos.github.io/LuisPortifolio/)
 - Planejamento e decisões: [docs/PLANNING.md](docs/PLANNING.md)
 - Referências: [docs/REFERENCES.md](docs/REFERENCES.md)
 - Validações executadas: [docs/VALIDATION.md](docs/VALIDATION.md)
