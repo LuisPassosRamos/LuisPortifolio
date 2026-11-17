@@ -168,14 +168,14 @@ Regras: o circuito fica ao lado do texto, nunca atrás dele; é decorativo para 
 2. Dados dos projetos e páginas de case.
 3. Circuito do hero e demo de portas lógicas.
 4. README, workflows (validação automática, publicação manual).
-5. Validação: testes, build sob `/LuisPortfolio/`, inspeção em três larguras, teclado, movimento reduzido, console, Lighthouse.
+5. Validação: testes, build sob `/LuisPortifolio/`, inspeção em três larguras, teclado, movimento reduzido, console, Lighthouse.
 6. Envio ao repositório remoto. Publicação só depois da revisão de Luis.
 
-Pronto quando: build sem erros; testes passando; nenhuma rolagem horizontal em 360, 768 e 1440 px; todos os links internos respondem sob `/LuisPortfolio/`; demo correta nas quatro portas; foco visível em todos os controles; conteúdo legível com JavaScript desativado; resultados medidos registrados em `docs/VALIDATION.md`.
+Pronto quando: build sem erros; testes passando; nenhuma rolagem horizontal em 360, 768 e 1440 px; todos os links internos respondem sob `/LuisPortifolio/`; demo correta nas quatro portas; foco visível em todos os controles; conteúdo legível com JavaScript desativado; resultados medidos registrados em `docs/VALIDATION.md`.
 
 ## 9. Pendências que dependem de Luis
 
-1. Nome do repositório: o remoto existente é `LuisPortifolio`; o endereço esperado pede `LuisPortfolio`.
+1. ~~Nome do repositório.~~ Resolvido em 16/11/2026: o nome correto é `LuisPortifolio`, o mesmo do repositório remoto. A grafia `LuisPortfolio` do pedido inicial foi erro de digitação, e o caminho base, os links e os documentos foram corrigidos.
 2. Confirmar a redação da contribuição no Olympus 3D (desenvolvimento assistido por IA).
 3. Capturas do Olympus 3D com dados fictícios e imagens ou vídeo do LogicGates em jogo.
 4. Tecnologia e uso da automação de provas.
@@ -183,7 +183,7 @@ Pronto quando: build sem erros; testes passando; nenhuma rolagem horizontal em 3
 6. Currículo em PDF e e-mail profissional, se quiser oferecê-los.
 7. Decidir se o catálogo `Printables` entra no portfólio.
 8. Link do painel do Olympus 3D: ficou fora do case de propósito, por ser um sistema interno com login. Para incluir, acrescente o endereço em `links` no projeto `olympus-3d`.
-9. O rodapé aponta para `github.com/LuisPassosRamos/LuisPortfolio`. O link só funciona depois que o repositório tiver esse nome e for público.
+9. O rodapé aponta para `github.com/LuisPassosRamos/LuisPortifolio`. O link só abre para visitantes depois que o repositório for público.
 10. Revisar os textos escritos em primeira pessoa que não vieram de um relato direto: o parágrafo central do "Sobre", a frase de disponibilidade no contato e a descrição da contribuição em cada case.
 11. LogicGates: confirmar se e como mencionar ferramentas de IA no desenvolvimento do mod. O texto atual não faz essa menção.
 12. A documentação do Olympus 3D registra que o GitHub Actions da conta estava bloqueado por cobrança pendente. Se continuar assim, os workflows deste repositório não rodam até a regularização.
@@ -193,4 +193,5 @@ Pronto quando: build sem erros; testes passando; nenhuma rolagem horizontal em 3
 - O circuito do hero passou de proporção 2:1 para ladrilhos de 56 × 34, para ganhar altura ao lado do título.
 - O título do hero foi reduzido para caber em menos linhas.
 - No celular, o controle de movimento virou um botão de pausar e retomar, porque o texto não cabia no cabeçalho.
-- O workflow de publicação usa o endereço e o caminho informados pelo Pages. O padrão local continua `/LuisPortfolio/`.
+- O workflow de publicação usa o endereço e o caminho informados pelo Pages. O padrão local é `/LuisPortifolio/`.
+- O caminho base foi criado como `/LuisPortfolio/`, conforme o pedido inicial, e corrigido para `/LuisPortifolio/` depois da confirmação do nome.

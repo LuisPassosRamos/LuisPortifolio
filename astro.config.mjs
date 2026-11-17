@@ -1,9 +1,9 @@
 import { defineConfig } from 'astro/config';
 
-// GitHub Pages de projeto: https://luispassosramos.github.io/LuisPortfolio/
+// GitHub Pages de projeto: https://luispassosramos.github.io/LuisPortifolio/
 // Para domínio próprio, defina SITE_URL e BASE_PATH=/ (veja o README).
 const site = process.env.SITE_URL ?? 'https://luispassosramos.github.io';
-const base = process.env.BASE_PATH ?? '/LuisPortfolio/';
+const base = process.env.BASE_PATH ?? '/LuisPortifolio/';
 
 export default defineConfig({
   site,

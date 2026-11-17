@@ -1,6 +1,8 @@
 # Validação
 
-Verificações executadas em 16/11/2026 sobre o build de produção servido localmente por `astro preview` em `http://localhost:4321/LuisPortfolio/`. São medições de laboratório em uma única máquina. Nenhuma delas é dado de uso real.
+Verificações executadas em 16/11/2026 sobre o build de produção servido localmente por `astro preview`. São medições de laboratório em uma única máquina. Nenhuma delas é dado de uso real.
+
+As medições foram feitas com o caminho base `/LuisPortfolio/`, do pedido inicial. Depois da correção do nome para `/LuisPortifolio/`, foram refeitos a checagem de tipos, os testes, o build, a requisição aos links internos e a conferência do console. Lighthouse, capturas e testes manuais da demo não foram repetidos, porque a mudança afeta só o prefixo dos endereços.
 
 ## Ambiente
 
@@ -25,8 +27,8 @@ Os testes cobrem a tabela verdade de AND, OR, XOR e NOT contra valores escritos 
 | Verificação | Como | Resultado |
 | --- | --- | --- |
 | Rolagem horizontal | Script que mede todos os elementos de 7 páginas em 360, 768 e 1440 px | Nenhum elemento fora da tela |
-| Links e arquivos internos | Requisição a 28 URLs encontradas no HTML | Todas com status 200 e sob `/LuisPortfolio/` |
-| Endereço inexistente | `/LuisPortfolio/nao-existe/` | Página 404 do site |
+| Links e arquivos internos | Requisição a 28 URLs encontradas no HTML | Todas com status 200 e sob `/LuisPortifolio/` |
+| Endereço inexistente | `/LuisPortifolio/nao-existe/` | Página 404 do site |
 | Demo de portas lógicas | 14 combinações acionadas pelos controles reais | Lâmpada, resumo, tabela e linha marcada corretos em todas |
 | Demo por teclado | Setas no seletor, Tab, Espaço e Enter nas entradas | Funciona; foco visível |
 | Circuito do hero | Clique em cada alavanca, seis vezes | Estados e leitura coerentes com a lógica |

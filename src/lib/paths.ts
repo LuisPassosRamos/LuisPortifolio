@@ -1,4 +1,4 @@
-/** Prefixa caminhos internos com a base do site (ex.: /LuisPortfolio/). */
+/** Prefixa caminhos internos com a base do site (ex.: /LuisPortifolio/). */
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
 export function url(path = ''): string {

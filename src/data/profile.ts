@@ -15,7 +15,7 @@ export const profile = {
     github: 'https://github.com/LuisPassosRamos',
     linkedin: 'https://www.linkedin.com/in/luis-guilherme-passos-ramos/',
   },
-  repo: 'https://github.com/LuisPassosRamos/LuisPortfolio',
+  repo: 'https://github.com/LuisPassosRamos/LuisPortifolio',
 } as const;
 
 export const about = {

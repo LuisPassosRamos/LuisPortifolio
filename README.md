@@ -2,7 +2,7 @@
 
 Site estático com a apresentação, os cases e o contato de Luis Guilherme Passos Ramos. Feito com Astro 7, TypeScript, SVG e CSS, para publicação no GitHub Pages.
 
-- Endereço previsto: https://luispassosramos.github.io/LuisPortfolio/
+- Endereço previsto: https://luispassosramos.github.io/LuisPortifolio/
 - Planejamento e decisões: [docs/PLANNING.md](docs/PLANNING.md)
 - Referências: [docs/REFERENCES.md](docs/REFERENCES.md)
 - Validações executadas: [docs/VALIDATION.md](docs/VALIDATION.md)
@@ -19,7 +19,7 @@ npm install
 npm run dev
 ```
 
-O servidor de desenvolvimento abre em `http://localhost:4321/LuisPortfolio/`.
+O servidor de desenvolvimento abre em `http://localhost:4321/LuisPortifolio/`.
 
 | Comando | O que faz |
 | --- | --- |
@@ -85,7 +85,7 @@ npm run build
 npm run preview
 ```
 
-Abra `http://localhost:4321/LuisPortfolio/`. O `preview` serve o site sob o mesmo caminho do GitHub Pages, então links e arquivos se comportam como em produção.
+Abra `http://localhost:4321/LuisPortifolio/`. O `preview` serve o site sob o mesmo caminho do GitHub Pages, então links e arquivos se comportam como em produção.
 
 ## Publicar
 
@@ -97,7 +97,7 @@ A publicação é **manual**. O workflow `.github/workflows/ci.yml` valida cada 
 
 Observações:
 
-- O workflow lê o endereço e o caminho informados pelo próprio Pages. O site publicado funciona com qualquer nome de repositório; o endereço `…/LuisPortfolio/` depende de o repositório se chamar exatamente `LuisPortfolio`.
+- O workflow lê o endereço e o caminho informados pelo próprio Pages. Se o repositório for renomeado, o site publicado acompanha o novo nome; ajuste também o padrão local (`base` em `astro.config.mjs`) e o link do repositório em `src/data/profile.ts`.
 - No plano gratuito do GitHub, o Pages exige repositório público.
 - Recomendado: em **Settings → Environments → github-pages**, restrinja a publicação à branch `main`.
 - Para publicar a cada envio à `main`, acrescente `push: { branches: [main] }` em `on:` no `deploy.yml`.
