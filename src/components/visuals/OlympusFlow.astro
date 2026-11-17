@@ -1,0 +1,221 @@
+---
+/**
+ * Diagrama do fluxo pedido → caixa → estoque. Todos os dados são fictícios.
+ */
+const columns = [
+  { name: 'Novo', cards: ['Chaveiros · 40 un.', 'Placa de mesa'] },
+  { name: 'Em produção', cards: ['Luminária articulada'] },
+  { name: 'Pronto', cards: ['Miniaturas · 6 un.'] },
+  { name: 'Entregue', cards: ['Troféus · evento'], active: true },
+];
+
+const cost = [
+  { label: 'filamento', value: 'R$ 4,20' },
+  { label: 'energia', value: 'R$ 0,90' },
+  { label: 'desgaste', value: 'R$ 0,60' },
+  { label: 'trabalho', value: 'R$ 3,00' },
+];
+---
+
+<div class="of">
+  <p class="of-step"><span>1</span> O pedido anda pelo quadro de produção</p>
+  <ol class="of-board">
+    {
+      columns.map((column) => (
+        <li class:list={['of-col', { 'is-active': column.active }]}>
+          <span class="of-col-name">{column.name}</span>
+          {column.cards.map((card) => (
+            <span class="of-card">{card}</span>
+          ))}
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="of-step"><span>2</span> Marcar como entregue dispara dois lançamentos</p>
+  <div class="of-out">
+    <div class="of-box">
+      <strong>Caixa</strong>
+      <span>Venda registrada com cliente, pagamento, custo e quem lançou.</span>
+    </div>
+    <div class="of-box">
+      <strong>Estoque</strong>
+      <span>Filamento baixado na filial que produziu a peça.</span>
+    </div>
+  </div>
+
+  <p class="of-step"><span>3</span> O custo da peça vem de quatro parcelas</p>
+  <dl class="of-cost">
+    {
+      cost.map((item) => (
+        <div>
+          <dt>{item.label}</dt>
+          <dd>{item.value}</dd>
+        </div>
+      ))
+    }
+    <div class="of-total">
+      <dt>custo</dt>
+      <dd>R$ 8,70</dd>
+    </div>
+  </dl>
+</div>
+
+<style>
+  .of {
+    display: grid;
+    gap: 12px;
+    font-size: 0.9rem;
+  }
+
+  .of-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+    color: var(--text-2);
+    font-size: 0.88rem;
+  }
+
+  .of-step:first-child {
+    margin-top: 0;
+  }
+
+  .of-step span {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--line-2);
+    border-radius: 50%;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text);
+  }
+
+  .of-board {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .of-col {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    min-height: 104px;
+    padding: 8px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  .of-col-name {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .of-card {
+    padding: 6px 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-2);
+    border-radius: 6px;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    color: var(--text-2);
+    overflow-wrap: anywhere;
+  }
+
+  .of-col.is-active {
+    border-color: var(--signal);
+  }
+
+  .of-col.is-active .of-col-name {
+    color: var(--signal);
+  }
+
+  .of-col.is-active .of-card {
+    border-color: var(--signal);
+    background: var(--signal-soft);
+    color: var(--text);
+  }
+
+  .of-out {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .of-box {
+    display: grid;
+    gap: 2px;
+    padding: 12px;
+    border: 1px solid var(--line-2);
+    border-left: 3px solid var(--signal);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text-2);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  .of-box strong {
+    color: var(--text);
+    font-size: 0.92rem;
+  }
+
+  .of-cost {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .of-cost div {
+    flex: 1 1 86px;
+    padding: 8px 10px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  .of-cost dt {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .of-cost dd {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .of-cost .of-total {
+    border-color: var(--signal);
+  }
+
+  .of-cost .of-total dd {
+    color: var(--signal);
+  }
+
+  @media (max-width: 520px) {
+    .of-board {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .of-col {
+      min-height: 0;
+    }
+
+    .of-out {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+import '../styles/global.css';
+import displayFont from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import bodyFont from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import monoFont from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { profile } from '../data/profile';
+import { url } from '../lib/paths';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = profile.description } = Astro.props;
+const pageTitle = title
+  ? `${title} · ${profile.name}`
+  : `${profile.name} · ${profile.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const fontFaces = `
+@font-face{font-family:'Bricolage Grotesque Variable';src:url(${displayFont}) format('woff2');font-weight:200 800;font-style:normal;font-display:swap}
+@font-face{font-family:'Inter Variable';src:url(${bodyFont}) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:'JetBrains Mono Variable';src:url(${monoFont}) format('woff2');font-weight:100 800;font-style:normal;font-display:swap}
+`;
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.fullName,
+  alternateName: profile.name,
+  jobTitle: profile.role,
+  url: new URL(url(), Astro.site).href,
+  sameAs: [profile.links.github, profile.links.linkedin],
+  address: { '@type': 'PostalAddress', addressLocality: 'Santo Antônio de Jesus', addressRegion: 'BA', addressCountry: 'BR' },
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.fullName} />
+    <meta name="theme-color" content="#101216" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={fontFaces}></style>
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        var saved = null;
+        try {
+          saved = localStorage.getItem('motion');
+        } catch (e) {}
+        var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        d.dataset.motion = saved === 'on' || saved === 'off' ? saved : reduced ? 'off' : 'on';
+      })();
+    </script>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(person)}></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <Header />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>

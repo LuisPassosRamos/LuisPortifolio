@@ -1,0 +1,69 @@
+---
+/**
+ * Ícones reais dos itens do mod, copiados do repositório público LogicGatesMod
+ * (64 × 64 px, ampliados sem suavização).
+ */
+import { url } from '../../lib/paths';
+
+const items = [
+  { file: 'Logic_Lever', name: 'Alavanca' },
+  { file: 'Logic_Cable', name: 'Cabo' },
+  { file: 'Logic_Lamp', name: 'Lâmpada' },
+  { file: 'Logic_AND_Gate', name: 'AND' },
+  { file: 'Logic_OR_Gate', name: 'OR' },
+  { file: 'Logic_NOT_Gate', name: 'NOT' },
+  { file: 'Logic_XOR_Gate', name: 'XOR' },
+  { file: 'Logic_NAND_Gate', name: 'NAND' },
+  { file: 'Logic_NOR_Gate', name: 'NOR' },
+  { file: 'Logic_XNOR_Gate', name: 'XNOR' },
+  { file: 'Logic_Workbench', name: 'Bancada' },
+];
+---
+
+<ul class="gi">
+  {
+    items.map((item) => (
+      <li>
+        <img
+          src={url(`img/logicgates/${item.file}.png`)}
+          alt=""
+          width="64"
+          height="64"
+          loading="lazy"
+          decoding="async"
+        />
+        <span>{item.name}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .gi {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 10px;
+  }
+
+  li {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    padding: 10px 6px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  img {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+  }
+
+  span {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-2);
+  }
+</style>

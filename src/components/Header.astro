@@ -1,0 +1,227 @@
+---
+import { profile } from '../data/profile';
+import { url } from '../lib/paths';
+
+const nav = [
+  { label: 'Projetos', href: url('#projetos'), keep: true },
+  { label: 'Trajetória', href: url('#trajetoria'), keep: false },
+  { label: 'Sobre', href: url('#sobre'), keep: false },
+  { label: 'Contato', href: url('#contato'), keep: true },
+];
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href={url()} aria-label={`${profile.name}, página inicial`}>
+      <svg class="mark" viewBox="0 0 28 28" width="28" height="28" aria-hidden="true">
+        <polygon points="14,3 25,9 14,15 3,9" fill="var(--signal)"></polygon>
+        <polygon points="3,9 14,15 14,26 3,20" fill="#b97a1f"></polygon>
+        <polygon points="25,9 14,15 14,26 25,20" fill="#7d5212"></polygon>
+      </svg>
+      <span>{profile.name}</span>
+    </a>
+    <nav class="nav" aria-label="Seções da página inicial">
+      <ul>
+        {
+          nav.map((item) => (
+            <li class:list={{ optional: !item.keep }}>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <button
+      type="button"
+      class="motion-toggle"
+      data-motion-toggle
+      aria-pressed="true"
+    >
+      <span class="dot" aria-hidden="true"></span>
+      <svg class="icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <g class="icon-pause">
+          <rect x="3" y="2.5" width="3.6" height="11" rx="1"></rect>
+          <rect x="9.4" y="2.5" width="3.6" height="11" rx="1"></rect>
+        </g>
+        <path class="icon-play" d="M4.2 2.4v11.2a.6.6 0 0 0 .9.5l9.1-5.6a.6.6 0 0 0 0-1L5.1 1.9a.6.6 0 0 0-.9.5z"></path>
+      </svg>
+      <span class="text">
+        <span class="label">Movimento</span>
+        <span class="state" data-motion-state aria-hidden="true">ligado</span>
+      </span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(16, 18, 22, 0.86);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: var(--header-h);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.08rem;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    margin-right: auto;
+  }
+
+  .brand:hover {
+    color: var(--text);
+  }
+
+  .mark {
+    flex: none;
+  }
+
+  .nav ul {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    font-size: 0.94rem;
+    color: var(--text-2);
+    text-decoration: none;
+    border-radius: 6px;
+  }
+
+  .nav a:hover {
+    color: var(--signal);
+  }
+
+  .motion-toggle {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 12px;
+    background: transparent;
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.03em;
+    color: var(--text-2);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  :global(html.js) .motion-toggle {
+    display: inline-flex;
+  }
+
+  .motion-toggle:hover {
+    border-color: var(--signal);
+    color: var(--text);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--off);
+  }
+
+  .motion-toggle[aria-pressed='true'] .dot {
+    background: var(--signal);
+    box-shadow: 0 0 0 4px var(--signal-soft);
+  }
+
+  .state {
+    color: var(--text);
+  }
+
+  .text {
+    display: inline-flex;
+    gap: 8px;
+  }
+
+  /* No celular o controle vira um botão de pausar ou retomar. */
+  .icon {
+    display: none;
+    fill: var(--signal);
+  }
+
+  .icon-play {
+    display: none;
+  }
+
+  .motion-toggle[aria-pressed='false'] .icon {
+    fill: var(--text-2);
+  }
+
+  .motion-toggle[aria-pressed='false'] .icon-pause {
+    display: none;
+  }
+
+  .motion-toggle[aria-pressed='false'] .icon-play {
+    display: block;
+  }
+
+  @media (max-width: 760px) {
+    .nav .optional {
+      display: none;
+    }
+
+    .nav a {
+      padding: 0 8px;
+    }
+
+    .bar {
+      gap: 8px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .motion-toggle {
+      justify-content: center;
+      width: 44px;
+      min-height: 44px;
+      padding: 0;
+    }
+
+    .dot {
+      display: none;
+    }
+
+    .icon {
+      display: block;
+    }
+
+    .text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .brand {
+      font-size: 1rem;
+    }
+  }
+</style>

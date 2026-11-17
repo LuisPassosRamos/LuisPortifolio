@@ -1,0 +1,443 @@
+---
+/**
+ * Circuito do hero. O SVG é gerado no build já no estado inicial, então a
+ * composição existe mesmo sem JavaScript. O script apenas troca atributos.
+ */
+import {
+  ISO,
+  evaluateCircuit,
+  heroCircuit,
+  heroInitialInputs,
+  project,
+  signalDepths,
+  type Cell,
+  type CircuitNode,
+} from '../lib/circuit';
+import { bit } from '../lib/logic';
+
+const signals = evaluateCircuit(heroCircuit, heroInitialInputs);
+const depths = signalDepths(heroCircuit);
+
+const round = (value: number) => Math.round(value * 10) / 10;
+
+function wirePath(segments: Cell[][]): string {
+  return segments
+    .map((segment) =>
+      segment
+        .map((cell, index) => {
+          const { x, y } = project(cell);
+          return `${index === 0 ? 'M' : 'L'}${round(x)} ${round(y)}`;
+        })
+        .join(' '),
+    )
+    .join(' ');
+}
+
+const RATIO = ISO.tileH / ISO.tileW;
+const SIZE = {
+  LEVER: { hw: 20, h: 9 },
+  GATE: { hw: 26, h: 20 },
+  LAMP: { hw: 18, h: 8 },
+} as const;
+const labelMatrix = `${round(0.8)} ${round(0.8 * RATIO * 10) / 10} ${-0.8} ${round(0.8 * RATIO * 10) / 10}`;
+
+function cube(node: CircuitNode) {
+  const { x, y } = project(node.at);
+  const { hw, h } = SIZE[node.kind];
+  const hh = hw * RATIO;
+  const p = (dx: number, dy: number) => `${round(x + dx)},${round(y + dy)}`;
+  return {
+    x,
+    y,
+    h,
+    top: [p(0, -hh - h), p(hw, -h), p(0, hh - h), p(-hw, -h)].join(' '),
+    left: [p(-hw, -h), p(0, hh - h), p(0, hh), p(-hw, 0)].join(' '),
+    right: [p(hw, -h), p(0, hh - h), p(0, hh), p(hw, 0)].join(' '),
+  };
+}
+
+// Mais distante primeiro, para os blocos da frente cobrirem os de trás.
+const ordered = [...heroCircuit.nodes]
+  .sort((a, b) => a.at[0] + a.at[1] - (b.at[0] + b.at[1]))
+  .map((node, index) => ({ node, geo: cube(node), index }));
+
+const gridLines: string[] = [];
+for (let col = -1; col <= heroCircuit.cols + 1; col++) {
+  const a = project([col - 0.5, -1.5]);
+  const b = project([col - 0.5, heroCircuit.rows + 1.5]);
+  gridLines.push(`M${round(a.x)} ${round(a.y)}L${round(b.x)} ${round(b.y)}`);
+}
+for (let row = -1; row <= heroCircuit.rows + 1; row++) {
+  const a = project([-1.5, row - 0.5]);
+  const b = project([heroCircuit.cols + 1.5, row - 0.5]);
+  gridLines.push(`M${round(a.x)} ${round(a.y)}L${round(b.x)} ${round(b.y)}`);
+}
+
+// Encaixes vazios: lugares onde ainda cabe uma peça.
+const slots: Cell[] = [
+  [7, 0],
+  [9, 6],
+  [0, 8],
+];
+const slotPoints = slots.map((cell) => {
+  const { x, y } = project(cell);
+  const hh = round(24 * RATIO);
+  return [`${x},${y - hh}`, `${x + 24},${y}`, `${x},${y + hh}`, `${x - 24},${y}`].join(' ');
+});
+
+const readout = `A=${bit(signals.a ?? false)} B=${bit(signals.b ?? false)} C=${bit(signals.c ?? false)}`;
+---
+
+<div class="hc" data-hero-circuit data-active="true" aria-hidden="true">
+  <svg viewBox={`0 0 ${ISO.width} ${ISO.height}`} class="hc-svg" focusable="false">
+    <defs>
+      <radialGradient id="hc-fade" cx="50%" cy="50%" r="55%">
+        <stop offset="55%" stop-color="#fff"></stop>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"></stop>
+      </radialGradient>
+      <mask id="hc-mask">
+        <rect width={ISO.width} height={ISO.height} fill="url(#hc-fade)"></rect>
+      </mask>
+      <radialGradient id="hc-halo">
+        <stop offset="0%" stop-color="#ffb23e" stop-opacity="0.55"></stop>
+        <stop offset="100%" stop-color="#ffb23e" stop-opacity="0"></stop>
+      </radialGradient>
+    </defs>
+
+    <g class="hc-layer hc-layer--grid" mask="url(#hc-mask)">
+      <path class="hc-grid" d={gridLines.join('')}></path>
+      {slotPoints.map((points) => <polygon class="hc-slot" points={points} />)}
+    </g>
+
+    <g class="hc-layer hc-layer--circuit">
+      {
+        heroCircuit.wires.map((wire) => {
+          const d = wirePath(wire.segments);
+          const on = String(signals[wire.id] ?? false);
+          const style = `--d:${depths[wire.id] ?? 0}`;
+          return (
+            <g>
+              <path class="hc-wire" d={d} data-signal={wire.id} data-on={on} style={style} />
+              <path class="hc-pulse" d={d} data-signal={wire.id} data-on={on} style={style} />
+            </g>
+          );
+        })
+      }
+
+      {
+        ordered.map(({ node, geo, index }) => (
+          <g
+            class={`hc-node hc-node--${node.kind.toLowerCase()}`}
+            data-node={node.id}
+            data-signal={node.id}
+            data-on={String(signals[node.id] ?? false)}
+            style={`--d:${depths[node.id] ?? 0};--i:${index}`}
+          >
+            <g class="hc-lift">
+              {node.kind === 'LAMP' && (
+                <circle class="hc-halo" cx={geo.x} cy={geo.y - geo.h - 9} r="40" fill="url(#hc-halo)" />
+              )}
+              <polygon class="hc-face hc-face--left" points={geo.left} />
+              <polygon class="hc-face hc-face--right" points={geo.right} />
+              <polygon class="hc-face hc-face--top" points={geo.top} />
+
+              {node.kind === 'GATE' && (
+                <>
+                  <text
+                    class="hc-gate-label"
+                    transform={`matrix(${labelMatrix} ${round(geo.x)} ${round(geo.y - geo.h)})`}
+                    text-anchor="middle"
+                    dominant-baseline="central"
+                  >
+                    {node.gate}
+                  </text>
+                  <ellipse class="hc-led" cx={geo.x + 15} cy={geo.y - geo.h} rx="3.4" ry="1.9" />
+                </>
+              )}
+
+              {node.kind === 'LEVER' && (
+                <>
+                  <line class="hc-stick hc-stick--off" x1={geo.x} y1={geo.y - geo.h} x2={geo.x - 8} y2={geo.y - geo.h - 13} />
+                  <circle class="hc-knob hc-stick--off" cx={geo.x - 8} cy={geo.y - geo.h - 13} r="3.6" />
+                  <line class="hc-stick hc-stick--on" x1={geo.x} y1={geo.y - geo.h} x2={geo.x + 8} y2={geo.y - geo.h - 13} />
+                  <circle class="hc-knob hc-stick--on" cx={geo.x + 8} cy={geo.y - geo.h - 13} r="3.6" />
+                  <text class="hc-lever-label" x={geo.x - 30} y={geo.y - 10} text-anchor="middle">
+                    {node.label}
+                  </text>
+                </>
+              )}
+
+              {node.kind === 'LAMP' && <circle class="hc-bulb" cx={geo.x} cy={geo.y - geo.h - 9} r="10.5" />}
+            </g>
+          </g>
+        ))
+      }
+    </g>
+  </svg>
+
+  <p class="hc-readout">
+    <span data-hero-readout>{readout}</span>
+    <span class="hc-hint" data-hero-hint>Circuito de verdade. Mexa nas alavancas e tente acender as duas lâmpadas.</span>
+  </p>
+</div>
+
+<script>
+  import '../scripts/hero-circuit.ts';
+</script>
+
+<style>
+  .hc {
+    position: relative;
+    width: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+
+  .hc-svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .hc-layer {
+    transition: transform 0.35s ease-out;
+  }
+
+  .hc-layer--grid {
+    transform: translate(calc(var(--px, 0) * -5px), calc(var(--py, 0) * -3px));
+  }
+
+  .hc-layer--circuit {
+    transform: translate(calc(var(--px, 0) * 5px), calc(var(--py, 0) * 3px));
+  }
+
+  .hc-grid {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .hc-slot {
+    fill: none;
+    stroke: var(--line-2);
+    stroke-width: 1.2;
+    stroke-dasharray: 4 4;
+  }
+
+  /* Cabos: o atraso por profundidade faz o sinal "percorrer" o circuito. */
+  .hc-wire {
+    fill: none;
+    stroke: var(--off);
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.2s linear;
+    transition-delay: calc(var(--d) * 80ms);
+  }
+
+  .hc-wire[data-on='true'] {
+    stroke: var(--signal);
+  }
+
+  .hc-pulse {
+    fill: none;
+    stroke: #fff4dc;
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1 33;
+    opacity: 0;
+    transition: opacity 0.2s linear;
+    transition-delay: calc(var(--d) * 80ms);
+  }
+
+  .hc-pulse[data-on='true'] {
+    opacity: 0.95;
+    animation: hc-flow 1.2s linear infinite;
+  }
+
+  .hc[data-active='false'] .hc-pulse {
+    animation-play-state: paused;
+  }
+
+  :global(html[data-motion='off']) .hc-pulse {
+    opacity: 0 !important;
+  }
+
+  @keyframes hc-flow {
+    to {
+      stroke-dashoffset: -34;
+    }
+  }
+
+  /* Blocos */
+  .hc-lift {
+    transform: translateY(calc(var(--lift, 0) * -7px));
+    transition: transform 0.2s var(--ease);
+  }
+
+  .hc-face {
+    stroke: var(--line-2);
+    stroke-width: 1;
+    stroke-linejoin: round;
+    transition:
+      fill 0.2s linear,
+      stroke 0.2s linear;
+    transition-delay: calc(var(--d) * 80ms);
+  }
+
+  .hc-face--top {
+    fill: #262b34;
+  }
+
+  .hc-face--left {
+    fill: #1b1f26;
+  }
+
+  .hc-face--right {
+    fill: #15181d;
+  }
+
+  .hc-node--gate[data-on='true'] .hc-face--top {
+    stroke: var(--signal);
+  }
+
+  .hc-gate-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    fill: var(--text-2);
+    transition: fill 0.2s linear;
+    transition-delay: calc(var(--d) * 80ms);
+  }
+
+  .hc-node--gate[data-on='true'] .hc-gate-label {
+    fill: var(--text);
+  }
+
+  .hc-led {
+    fill: #0c0e11;
+    stroke: var(--off);
+    stroke-width: 0.8;
+    transition: fill 0.2s linear;
+    transition-delay: calc(var(--d) * 80ms);
+  }
+
+  .hc-node--gate[data-on='true'] .hc-led {
+    fill: var(--signal);
+    stroke: var(--signal);
+  }
+
+  /* Alavancas */
+  .hc-node--lever {
+    cursor: pointer;
+  }
+
+  .hc-stick {
+    stroke: var(--text-2);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+  }
+
+  .hc-knob {
+    fill: var(--text-2);
+  }
+
+  .hc-stick--on {
+    opacity: 0;
+  }
+
+  .hc-node--lever[data-on='true'] .hc-stick--off {
+    opacity: 0;
+  }
+
+  .hc-node--lever[data-on='true'] .hc-stick--on {
+    opacity: 1;
+  }
+
+  .hc-node--lever[data-on='true'] .hc-knob,
+  .hc-node--lever[data-on='true'] .hc-stick {
+    stroke: var(--signal);
+    fill: var(--signal);
+  }
+
+  .hc-node--lever[data-on='true'] .hc-face--top {
+    stroke: var(--signal);
+  }
+
+  .hc-lever-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    fill: var(--text-2);
+  }
+
+  /* Lâmpadas */
+  .hc-bulb {
+    fill: #20242c;
+    stroke: var(--off);
+    stroke-width: 1.4;
+    transition:
+      fill 0.25s linear,
+      stroke 0.25s linear;
+    transition-delay: calc(var(--d) * 80ms);
+  }
+
+  .hc-halo {
+    opacity: 0;
+    transition: opacity 0.3s linear;
+    transition-delay: calc(var(--d) * 80ms);
+  }
+
+  .hc-node--lamp[data-on='true'] .hc-bulb {
+    fill: var(--signal);
+    stroke: #ffe1a8;
+  }
+
+  .hc-node--lamp[data-on='true'] .hc-halo {
+    opacity: 1;
+  }
+
+  /*
+   * Montagem inicial: os blocos pousam na bancada uma única vez.
+   * Sem preenchimento anterior ao início: se o navegador segurar a animação
+   * (aba em segundo plano), os blocos já estão visíveis no lugar.
+   */
+  :global(html.js[data-motion='on']) .hc-node {
+    animation: hc-drop 0.5s var(--ease);
+    animation-delay: calc(var(--i) * 50ms + 80ms);
+  }
+
+  @keyframes hc-drop {
+    from {
+      opacity: 0.25;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .hc-readout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    align-items: baseline;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-3);
+  }
+
+  .hc-readout [data-hero-readout] {
+    color: var(--signal);
+    white-space: nowrap;
+  }
+
+  .hc[data-complete='true'] .hc-hint {
+    color: var(--text);
+  }
+</style>

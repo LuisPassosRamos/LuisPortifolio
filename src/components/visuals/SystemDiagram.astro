@@ -1,0 +1,125 @@
+---
+/**
+ * Diagrama de componentes: blocos em cima, ligações em lista embaixo.
+ * A lista é texto, então cada ligação é legível por leitores de tela.
+ */
+import type { DiagramLink, DiagramNode } from '../../data/types';
+
+interface Props {
+  nodes: DiagramNode[];
+  links: DiagramLink[];
+}
+
+const { nodes, links } = Astro.props;
+const titleOf = (id: string) => nodes.find((node) => node.id === id)?.title ?? id;
+---
+
+<div class="sd">
+  <ul class="sd-nodes">
+    {
+      nodes.map((node) => (
+        <li class="sd-node">
+          <strong>{node.title}</strong>
+          <span>{node.detail}</span>
+        </li>
+      ))
+    }
+  </ul>
+  <ul class="sd-links">
+    {
+      links.map((link) => (
+        <li class="sd-link">
+          <span class="sd-end">{titleOf(link.from)}</span>
+          <span class="sd-wire" aria-hidden="true" />
+          <span class="visually-hidden"> para </span>
+          <span class="sd-end">{titleOf(link.to)}</span>
+          <span class="sd-label">{link.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .sd {
+    display: grid;
+    gap: 18px;
+  }
+
+  .sd-nodes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+
+  .sd-node {
+    display: grid;
+    gap: 2px;
+    padding: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-2);
+    border-top: 3px solid var(--signal);
+    border-radius: 8px;
+  }
+
+  .sd-node strong {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+  }
+
+  .sd-node span {
+    font-size: 0.82rem;
+    color: var(--text-2);
+  }
+
+  .sd-links {
+    display: grid;
+    gap: 2px;
+  }
+
+  .sd-link {
+    display: grid;
+    grid-template-columns: minmax(84px, max-content) 40px minmax(84px, max-content) minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.88rem;
+  }
+
+  .sd-end {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+
+  .sd-wire {
+    position: relative;
+    height: 2px;
+    background: var(--signal);
+  }
+
+  .sd-wire::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    border-left: 7px solid var(--signal);
+    border-block: 5px solid transparent;
+  }
+
+  .sd-label {
+    color: var(--text-2);
+  }
+
+  @media (max-width: 560px) {
+    .sd-link {
+      grid-template-columns: max-content 28px max-content;
+    }
+
+    .sd-label {
+      grid-column: 1 / -1;
+      margin-top: -4px;
+    }
+  }
+</style>

@@ -1,0 +1,202 @@
+---
+/**
+ * Antes e depois da automação de provas. Escola e questões são fictícias.
+ */
+const raw = `1) quanto e 3/4 + 1/8?
+a) 7/8 b) 4/12 c) 1/2 d) 5/8
+2) explique com suas palavras o que e
+uma fracao equivalente e de um exemplo`;
+---
+
+<div class="ef">
+  <figure class="ef-side">
+    <figcaption>Entrada: questões como foram escritas</figcaption>
+    <pre class="ef-raw">{raw}</pre>
+  </figure>
+
+  <div class="ef-arrow" aria-hidden="true"><span>automação</span></div>
+
+  <figure class="ef-side">
+    <figcaption>Saída: prova no padrão da escola</figcaption>
+    <div class="ef-paper">
+      <div class="ef-head">
+        <strong>Escola Exemplo</strong>
+        <span>Avaliação de Matemática · 6º ano</span>
+      </div>
+      <div class="ef-fields">
+        <span>Estudante: <i></i></span>
+        <span>Turma: <i class="short"></i></span>
+        <span>Data: <i class="short"></i></span>
+      </div>
+      <ol class="ef-questions">
+        <li>
+          Quanto é 3/4 + 1/8?
+          <ul>
+            <li>a) 7/8</li>
+            <li>b) 4/12</li>
+            <li>c) 1/2</li>
+            <li>d) 5/8</li>
+          </ul>
+        </li>
+        <li>
+          Explique com suas palavras o que é uma fração equivalente e dê um exemplo.
+          <div class="ef-lines" aria-hidden="true"></div>
+        </li>
+      </ol>
+    </div>
+  </figure>
+</div>
+
+<style>
+  .ef {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.15fr);
+    gap: 16px;
+    align-items: center;
+  }
+
+  .ef-side {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    color: var(--text-3);
+  }
+
+  .ef-raw {
+    margin: 0;
+    padding: 16px;
+    background: var(--bg);
+    border: 1px dashed var(--line-2);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: var(--text-2);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .ef-arrow {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--signal);
+  }
+
+  .ef-arrow::before {
+    content: '';
+    width: 44px;
+    height: 2px;
+    background: var(--signal);
+  }
+
+  .ef-arrow::after {
+    content: '→';
+    font-size: 1.1rem;
+    line-height: 0.6;
+  }
+
+  .ef-paper {
+    padding: 18px;
+    background: #f2f0e9;
+    color: #1c1d21;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .ef-head {
+    display: grid;
+    gap: 2px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1c1d21;
+    text-align: center;
+  }
+
+  .ef-head strong {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .ef-head span {
+    font-size: 0.78rem;
+    color: #4a4c55;
+  }
+
+  .ef-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    padding-block: 10px;
+    border-bottom: 1px solid #b9b6aa;
+    font-size: 0.76rem;
+    color: #33353c;
+  }
+
+  .ef-fields i {
+    display: inline-block;
+    width: 110px;
+    border-bottom: 1px solid #55575f;
+    vertical-align: baseline;
+  }
+
+  .ef-fields i.short {
+    width: 44px;
+  }
+
+  .ef-questions {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+    padding-left: 18px;
+    list-style: decimal;
+  }
+
+  .ef-questions ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 16px;
+    margin-top: 4px;
+    color: #33353c;
+  }
+
+  .ef-lines {
+    height: 34px;
+    margin-top: 6px;
+    background: repeating-linear-gradient(transparent 0 15px, #b9b6aa 15px 16px);
+  }
+
+  @media (max-width: 720px) {
+    .ef {
+      grid-template-columns: 1fr;
+    }
+
+    .ef-arrow {
+      grid-auto-flow: column;
+      justify-content: start;
+      align-items: center;
+    }
+
+    .ef-arrow::before {
+      display: none;
+    }
+
+    .ef-arrow::after {
+      content: '↓';
+      line-height: 1;
+    }
+  }
+</style>

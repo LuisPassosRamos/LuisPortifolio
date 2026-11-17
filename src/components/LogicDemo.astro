@@ -1,0 +1,526 @@
+---
+/**
+ * Demonstração de portas lógicas. O estado inicial e as quatro tabelas
+ * verdade são gerados no build; sem JavaScript, as tabelas continuam visíveis.
+ */
+import { GATES, bit, evaluateGate, explain, inputCount, summary, truthTable, type Gate } from '../lib/logic';
+
+interface Props {
+  /** Diferencia os campos quando houver mais de uma demo na mesma página. */
+  id?: string;
+  headingLevel?: 'h3' | 'h4';
+}
+
+const { id = 'demo', headingLevel: Heading = 'h3' } = Astro.props;
+
+const initial = { gate: 'AND' as Gate, a: true, b: true };
+const out = evaluateGate(initial.gate, initial.a, initial.b);
+
+const gateNotes: Record<Gate, string> = {
+  AND: 'liga quando A e B estão ligadas',
+  OR: 'liga quando A ou B está ligada',
+  XOR: 'liga quando só uma está ligada',
+  NOT: 'inverte a entrada A',
+};
+---
+
+<div
+  class="ld"
+  data-logic-demo
+  data-gate={initial.gate}
+  data-a={String(initial.a)}
+  data-b={String(initial.b)}
+  data-out={String(out)}
+  data-single="false"
+>
+  <div class="ld-top">
+    <Heading class="ld-title">Monte uma porta lógica</Heading>
+    <p class="ld-sub">Escolha a porta, mude as entradas e veja a lâmpada.</p>
+  </div>
+
+  <div class="ld-controls">
+    <fieldset class="ld-gates">
+      <legend>Porta</legend>
+      <div class="ld-seg">
+        {
+          GATES.map((gate) => (
+            <label class="ld-seg-item">
+              <input type="radio" name={`${id}-gate`} value={gate} checked={gate === initial.gate} />
+              <span>{gate}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <div class="ld-inputs" role="group" aria-label="Entradas">
+      <span class="ld-inputs-label" aria-hidden="true">Entradas</span>
+      <button type="button" class="ld-in" data-in="a" aria-pressed={initial.a ? 'true' : 'false'}>
+        <span class="ld-in-name">Entrada A</span>
+        <span class="ld-in-val" data-val="a" aria-hidden="true">{bit(initial.a)}</span>
+      </button>
+      <button type="button" class="ld-in" data-in="b" aria-pressed={initial.b ? 'true' : 'false'}>
+        <span class="ld-in-name">Entrada B</span>
+        <span class="ld-in-val" data-val="b" aria-hidden="true">{bit(initial.b)}</span>
+      </button>
+    </div>
+  </div>
+
+  <svg class="ld-stage" viewBox="0 0 520 190" role="img" aria-label="Esquema do circuito: entradas, porta e lâmpada" focusable="false">
+    <defs>
+      <radialGradient id={`${id}-halo`}>
+        <stop offset="0%" stop-color="#ffb23e" stop-opacity="0.6"></stop>
+        <stop offset="100%" stop-color="#ffb23e" stop-opacity="0"></stop>
+      </radialGradient>
+    </defs>
+
+    <path class="ld-wire ld-wire--a" d="M92 55 H162 V80 H216"></path>
+    <path class="ld-wire ld-wire--b" d="M92 135 H162 V110 H216"></path>
+    <path class="ld-wire ld-wire--out" d="M316 95 H412"></path>
+
+    <g class="ld-node ld-node--a" data-stage-in="a">
+      <rect x="24" y="33" width="68" height="44" rx="8"></rect>
+      <text x="44" y="56" class="ld-node-name">A</text>
+      <text x="72" y="56" class="ld-node-val" data-val="a">{bit(initial.a)}</text>
+    </g>
+    <g class="ld-node ld-node--b" data-stage-in="b">
+      <rect x="24" y="113" width="68" height="44" rx="8"></rect>
+      <text x="44" y="136" class="ld-node-name">B</text>
+      <text x="72" y="136" class="ld-node-val" data-val="b">{bit(initial.b)}</text>
+    </g>
+
+    <g class="ld-gate">
+      <rect x="216" y="58" width="100" height="74" rx="10"></rect>
+      <text x="266" y="96" class="ld-gate-name" data-gate-name>{initial.gate}</text>
+    </g>
+
+    <g class="ld-lamp">
+      <circle class="ld-halo" cx="446" cy="95" r="58" fill={`url(#${id}-halo)`}></circle>
+      <circle class="ld-bulb" cx="446" cy="95" r="26"></circle>
+      <text x="446" y="96" class="ld-lamp-val" data-val="out">{bit(out)}</text>
+      <text x="446" y="148" class="ld-lamp-name">saída</text>
+    </g>
+  </svg>
+
+  <div class="ld-result" aria-live="polite">
+    <p class="ld-summary" data-summary>{summary(initial.gate, initial.a, initial.b)}</p>
+    <p class="ld-explain" data-explain>{explain(initial.gate, initial.a, initial.b)}</p>
+  </div>
+
+  <noscript>
+    <p class="ld-noscript">
+      Os controles precisam de JavaScript. As tabelas verdade abaixo valem do mesmo jeito.
+    </p>
+  </noscript>
+
+  <div class="ld-tables">
+    {
+      GATES.map((gate) => {
+        const single = inputCount(gate) === 1;
+        return (
+          <table class="ld-table" data-table={gate}>
+            <caption>
+              <strong>{gate}</strong> {gateNotes[gate]}
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">A</th>
+                {!single && <th scope="col">B</th>}
+                <th scope="col">Saída</th>
+              </tr>
+            </thead>
+            <tbody>
+              {truthTable(gate).map((row) => (
+                <tr data-row={single ? bit(row.a) : bit(row.a) + bit(row.b ?? false)}>
+                  <td>{bit(row.a)}</td>
+                  {!single && <td>{bit(row.b ?? false)}</td>}
+                  <td class:list={{ on: row.out }}>{bit(row.out)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
+      })
+    }
+  </div>
+</div>
+
+<script>
+  import '../scripts/logic-demo.ts';
+</script>
+
+<style>
+  .ld {
+    display: grid;
+    gap: 18px;
+  }
+
+  .ld-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .ld-sub {
+    color: var(--text-2);
+    font-size: 0.94rem;
+  }
+
+  .ld-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    align-items: flex-end;
+  }
+
+  .ld-gates {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  .ld-gates legend,
+  .ld-inputs-label {
+    display: block;
+    padding: 0;
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .ld-seg {
+    display: inline-flex;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .ld-seg-item {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .ld-seg-item + .ld-seg-item {
+    border-left: 1px solid var(--line-2);
+  }
+
+  .ld-seg-item input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .ld-seg-item span {
+    display: grid;
+    place-items: center;
+    min-width: 58px;
+    min-height: 44px;
+    padding: 0 12px;
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--text-2);
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+
+  .ld-seg-item input:hover + span {
+    color: var(--text);
+  }
+
+  .ld-seg-item input:checked + span {
+    background: var(--signal);
+    color: var(--signal-ink);
+  }
+
+  .ld-seg-item input:focus-visible + span {
+    outline: 2px solid var(--signal);
+    outline-offset: -5px;
+  }
+
+  /* Sobre o fundo âmbar da opção marcada, o anel de foco precisa ser escuro. */
+  .ld-seg-item input:checked:focus-visible + span {
+    outline-color: var(--signal-ink);
+  }
+
+  .ld-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ld-inputs-label {
+    flex-basis: 100%;
+    margin-bottom: -2px;
+  }
+
+  .ld-in {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 6px 0 14px;
+    background: transparent;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--text-2);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      color 0.15s;
+  }
+
+  .ld-in:hover {
+    border-color: var(--text-2);
+    color: var(--text);
+  }
+
+  .ld-in-val {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--surface-2);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--text-2);
+  }
+
+  .ld-in[aria-pressed='true'] {
+    border-color: var(--signal);
+    color: var(--text);
+  }
+
+  .ld-in[aria-pressed='true'] .ld-in-val {
+    background: var(--signal);
+    color: var(--signal-ink);
+  }
+
+  .ld[data-single='true'] .ld-in[data-in='b'] {
+    display: none;
+  }
+
+  /* Esquema */
+  .ld-stage {
+    width: 100%;
+    height: auto;
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 38px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 38px 100%,
+      var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  .ld-wire {
+    fill: none;
+    stroke: var(--off);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.18s linear;
+  }
+
+  .ld[data-a='true'] .ld-wire--a,
+  .ld[data-b='true'] .ld-wire--b,
+  .ld[data-out='true'] .ld-wire--out {
+    stroke: var(--signal);
+  }
+
+  .ld-wire--out {
+    transition-delay: 0.12s;
+  }
+
+  .ld-node {
+    cursor: pointer;
+  }
+
+  .ld-node rect,
+  .ld-gate rect {
+    fill: var(--surface-2);
+    stroke: var(--line-2);
+    stroke-width: 1.5;
+    transition: stroke 0.18s linear;
+  }
+
+  .ld[data-a='true'] .ld-node--a rect,
+  .ld[data-b='true'] .ld-node--b rect,
+  .ld[data-out='true'] .ld-gate rect {
+    stroke: var(--signal);
+  }
+
+  .ld-node-name,
+  .ld-node-val,
+  .ld-gate-name,
+  .ld-lamp-val,
+  .ld-lamp-name {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
+    fill: var(--text-2);
+  }
+
+  .ld-node-name {
+    font-size: 15px;
+  }
+
+  .ld-node-val {
+    font-size: 17px;
+  }
+
+  .ld[data-a='true'] .ld-node--a .ld-node-val,
+  .ld[data-b='true'] .ld-node--b .ld-node-val {
+    fill: var(--signal);
+  }
+
+  .ld-gate-name {
+    font-size: 21px;
+    fill: var(--text);
+  }
+
+  .ld-bulb {
+    fill: var(--surface-2);
+    stroke: var(--off);
+    stroke-width: 2;
+    transition:
+      fill 0.2s linear 0.16s,
+      stroke 0.2s linear 0.16s;
+  }
+
+  .ld-halo {
+    opacity: 0;
+    transition: opacity 0.25s linear 0.16s;
+  }
+
+  .ld-lamp-val {
+    font-size: 19px;
+  }
+
+  .ld-lamp-name {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    fill: var(--text-3);
+  }
+
+  .ld[data-out='true'] .ld-bulb {
+    fill: var(--signal);
+    stroke: #ffe1a8;
+  }
+
+  .ld[data-out='true'] .ld-halo {
+    opacity: 1;
+  }
+
+  .ld[data-out='true'] .ld-lamp-val {
+    fill: var(--signal-ink);
+  }
+
+  .ld[data-single='true'] .ld-node--b,
+  .ld[data-single='true'] .ld-wire--b {
+    display: none;
+  }
+
+  /* Resultado */
+  .ld-result {
+    display: grid;
+    gap: 4px;
+    min-height: 4.6em;
+    align-content: start;
+  }
+
+  .ld-summary {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--signal);
+  }
+
+  .ld-explain {
+    color: var(--text);
+  }
+
+  .ld-noscript {
+    color: var(--text-2);
+    font-size: 0.9rem;
+  }
+
+  /* Tabelas verdade */
+  .ld-tables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
+  .ld-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    text-align: center;
+  }
+
+  .ld-table caption {
+    caption-side: top;
+    text-align: left;
+    padding-bottom: 8px;
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    color: var(--text-2);
+  }
+
+  .ld-table caption strong {
+    font-family: var(--font-mono);
+    color: var(--text);
+    margin-right: 6px;
+  }
+
+  .ld-table th,
+  .ld-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .ld-table th {
+    font-weight: 500;
+    color: var(--text-3);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ld-table td {
+    color: var(--text-2);
+  }
+
+  .ld-table td.on {
+    color: var(--signal);
+    font-weight: 700;
+  }
+
+  .ld-table tr[data-current='true'] td {
+    background: var(--signal-soft);
+    color: var(--text);
+  }
+
+  .ld-table tr[data-current='true'] td:first-child {
+    box-shadow: inset 3px 0 0 var(--signal);
+  }
+
+  .ld-table tr[data-current='true'] td.on {
+    color: var(--signal);
+  }
+</style>

@@ -1,0 +1,45 @@
+---
+import { profile } from '../data/profile';
+---
+
+<footer class="site-footer">
+  <div class="wrap inner">
+    <p>
+      {profile.fullName}. Feito com Astro, TypeScript, SVG e CSS, sem rastreadores.
+    </p>
+    <ul>
+      <li><a href={profile.links.github} rel="me noopener">GitHub</a></li>
+      <li><a href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
+      <li><a href={profile.repo} rel="noopener">Código deste site</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    padding-block: 28px;
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

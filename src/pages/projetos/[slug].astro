@@ -1,0 +1,515 @@
+---
+import Base from '../../layouts/Base.astro';
+import LogicDemo from '../../components/LogicDemo.astro';
+import ExamFlow from '../../components/visuals/ExamFlow.astro';
+import GateIcons from '../../components/visuals/GateIcons.astro';
+import OlympusFlow from '../../components/visuals/OlympusFlow.astro';
+import SystemDiagram from '../../components/visuals/SystemDiagram.astro';
+import { profile } from '../../data/profile';
+import { projects } from '../../data/projects';
+import type { Project } from '../../data/types';
+import { projectUrl, url } from '../../lib/paths';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const index = projects.findIndex((item) => item.slug === project.slug);
+const next = projects[(index + 1) % projects.length]!;
+---
+
+<Base title={`${project.title}: ${project.subtitle}`} description={project.summary}>
+  <article class="case">
+    <header class="case-head">
+      <div class="wrap">
+        <nav class="crumbs" aria-label="Você está em">
+          <a href={url('#projetos')}>Projetos</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{project.title}</span>
+        </nav>
+        <p class="tag">{project.kind}</p>
+        <h1>{project.title}</h1>
+        <p class="case-sub">{project.subtitle}</p>
+        <p class="lead">{project.summary}</p>
+
+        <dl class="sheet">
+          <div>
+            <dt>Meu papel</dt>
+            <dd>{project.role}</dd>
+          </div>
+          <div>
+            <dt>Período</dt>
+            <dd>{project.period}</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>{project.status}</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <div class="wrap case-body">
+      <section class="block" aria-labelledby="s-contexto">
+        <h2 id="s-contexto">Contexto e problema</h2>
+        <div class="prose">
+          {project.context.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </section>
+
+      {
+        project.users && (
+          <section class="block" aria-labelledby="s-usuarios">
+            <h2 id="s-usuarios">Quem usa</h2>
+            <div class="prose">
+              <p>{project.users}</p>
+            </div>
+          </section>
+        )
+      }
+
+      <section class="block" aria-labelledby="s-contribuicao">
+        <h2 id="s-contribuicao">O que eu fiz</h2>
+        <div class="prose">
+          <ul class="bullets">
+            {project.contribution.map((item) => <li>{item}</li>)}
+          </ul>
+          {project.attribution && <p class="note">{project.attribution}</p>}
+        </div>
+      </section>
+
+      <section class="block block--wide" aria-labelledby="s-visual">
+        <h2 id="s-visual">{project.visual === 'logic-demo' ? 'Experimente' : 'Como funciona'}</h2>
+        <figure class="panel">
+          {project.visual === 'olympus-flow' && <OlympusFlow />}
+          {project.visual === 'logic-demo' && <LogicDemo id="case-demo" />}
+          {project.visual === 'exam-flow' && <ExamFlow />}
+          {
+            project.visual === 'system' && project.diagram && (
+              <SystemDiagram nodes={project.diagram.nodes} links={project.diagram.links} />
+            )
+          }
+          <figcaption class="panel-caption">{project.visualCaption}</figcaption>
+        </figure>
+        {
+          project.visual === 'logic-demo' && (
+            <figure class="panel icons">
+              <GateIcons />
+              <figcaption class="panel-caption">
+                Ícones dos itens do mod, do repositório público. Não são capturas do jogo.
+              </figcaption>
+            </figure>
+          )
+        }
+      </section>
+
+      <section class="block" aria-labelledby="s-solucao">
+        <h2 id="s-solucao">A solução</h2>
+        <dl class="solution">
+          {
+            project.solution.map((item) => (
+              <div>
+                <dt>{item.title}</dt>
+                <dd>{item.text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      {
+        project.decision && (
+          <section class="block decision" aria-labelledby="s-decisao">
+            <h2 id="s-decisao">
+              <span class="eyebrow">Decisão técnica</span>
+              {project.decision.title}
+            </h2>
+            <div class="prose">
+              {project.decision.text.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {
+        project.stack.length > 0 && (
+          <section class="block" aria-labelledby="s-stack">
+            <h2 id="s-stack">Tecnologias e para que servem</h2>
+            <dl class="stack">
+              {project.stack.map((item) => (
+                <div>
+                  <dt>{item.name}</dt>
+                  <dd>{item.use}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )
+      }
+
+      {
+        project.results && (
+          <section class="block" aria-labelledby="s-resultado">
+            <h2 id="s-resultado">Resultado observado</h2>
+            <div class="prose">
+              <ul class="bullets">
+                {project.results.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )
+      }
+
+      <section class="block" aria-labelledby="s-estado">
+        <h2 id="s-estado">Estado atual e limites</h2>
+        <div class="prose">
+          <p>{project.state}</p>
+          <ul class="bullets bullets--limits">
+            {project.limits.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      {
+        project.links.length > 0 && (
+          <section class="block" aria-labelledby="s-links">
+            <h2 id="s-links">Links</h2>
+            <ul class="links">
+              {project.links.map((link) => (
+                <li>
+                  <a class="arrow-link" href={link.href} rel="noopener">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </div>
+
+    <footer class="case-foot">
+      <div class="wrap case-foot-inner">
+        <a class="next" href={projectUrl(next.slug)}>
+          <span class="eyebrow">Próximo case</span>
+          <strong>{next.title}</strong>
+          <span>{next.subtitle}</span>
+        </a>
+        <div class="case-contact">
+          <p>Quer conversar sobre este trabalho?</p>
+          <a class="btn btn--ghost" href={profile.links.linkedin} rel="me noopener">Escrever no LinkedIn</a>
+        </div>
+      </div>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .case-head {
+    padding-block: clamp(28px, 5vw, 64px) clamp(32px, 5vw, 56px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .case-head .wrap {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+  }
+
+  .crumbs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-3);
+  }
+
+  .crumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--text-2);
+  }
+
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    letter-spacing: -0.03em;
+  }
+
+  .case-sub {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: var(--text);
+  }
+
+  .sheet {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    max-width: 52rem;
+    margin: 18px 0 0;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .sheet div {
+    padding: 14px 18px;
+  }
+
+  .sheet div + div {
+    border-left: 1px solid var(--line-2);
+  }
+
+  .sheet dt,
+  .stack dt {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .sheet dd {
+    font-size: 0.95rem;
+  }
+
+  .case-body {
+    display: grid;
+    gap: 0;
+    padding-block: clamp(16px, 3vw, 32px) clamp(48px, 7vw, 88px);
+  }
+
+  .block {
+    display: grid;
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+    gap: 16px clamp(24px, 5vw, 64px);
+    align-items: start;
+    padding-block: clamp(28px, 4vw, 44px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .block:last-child {
+    border-bottom: 0;
+  }
+
+  .block h2 {
+    font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+    letter-spacing: -0.015em;
+  }
+
+  .block--wide {
+    grid-template-columns: 1fr;
+  }
+
+  .block--wide .panel {
+    max-width: 880px;
+  }
+
+  .icons {
+    margin-top: 4px;
+  }
+
+  .prose {
+    display: grid;
+    gap: 14px;
+    max-width: 42rem;
+    color: var(--text-2);
+  }
+
+  .prose > p:first-child {
+    color: var(--text);
+  }
+
+  .bullets {
+    display: grid;
+    gap: 12px;
+  }
+
+  .bullets li {
+    position: relative;
+    padding-left: 22px;
+    color: var(--text);
+  }
+
+  .bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 10px;
+    height: 2px;
+    background: var(--signal);
+  }
+
+  .bullets--limits li {
+    color: var(--text-2);
+  }
+
+  .bullets--limits li::before {
+    background: var(--off);
+  }
+
+  .note {
+    padding: 12px 16px;
+    border-left: 2px solid var(--line-2);
+    font-size: 0.92rem;
+    color: var(--text-2);
+  }
+
+  .solution,
+  .stack {
+    display: grid;
+    margin: 0;
+    max-width: 46rem;
+  }
+
+  .solution div {
+    display: grid;
+    gap: 4px;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .solution div:first-child,
+  .stack div:first-child {
+    padding-top: 0;
+  }
+
+  .solution div:last-child,
+  .stack div:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .solution dt {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.08rem;
+  }
+
+  .solution dd {
+    color: var(--text-2);
+  }
+
+  .stack div {
+    display: grid;
+    grid-template-columns: minmax(0, 0.55fr) minmax(0, 1fr);
+    gap: 4px 20px;
+    align-items: baseline;
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stack dt {
+    font-size: 0.84rem;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--text);
+  }
+
+  .stack dd {
+    color: var(--text-2);
+    font-size: 0.94rem;
+  }
+
+  .decision {
+    margin-block: -1px;
+    padding-inline: clamp(16px, 3vw, 32px);
+    background: var(--surface);
+    border: 1px solid var(--line-2);
+    border-left: 3px solid var(--signal);
+    border-radius: var(--radius);
+  }
+
+  .decision h2 {
+    display: grid;
+    gap: 10px;
+  }
+
+  .decision .eyebrow {
+    font-weight: 500;
+  }
+
+  .links {
+    display: grid;
+    gap: 6px;
+    justify-items: start;
+  }
+
+  .links a {
+    min-height: 44px;
+  }
+
+  .case-foot {
+    border-top: 1px solid var(--line);
+    background: var(--bg-2);
+    padding-block: clamp(32px, 5vw, 56px);
+  }
+
+  .case-foot-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px 48px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .next {
+    display: grid;
+    gap: 6px;
+    text-decoration: none;
+  }
+
+  .next strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .next strong::after {
+    content: ' →';
+    color: var(--signal);
+  }
+
+  .next span:last-child {
+    color: var(--text-2);
+  }
+
+  .case-contact {
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+    color: var(--text-2);
+  }
+
+  @media (max-width: 820px) {
+    .block {
+      grid-template-columns: 1fr;
+    }
+
+    .sheet {
+      grid-template-columns: 1fr;
+    }
+
+    .sheet div + div {
+      border-left: 0;
+      border-top: 1px solid var(--line-2);
+    }
+
+    .stack div {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
