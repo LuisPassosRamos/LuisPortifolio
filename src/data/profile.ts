@@ -3,12 +3,12 @@ import type { Capability, ExperienceItem } from './types';
 export const profile = {
   name: 'Luis Ramos',
   fullName: 'Luis Guilherme Passos Ramos',
-  role: 'Desenvolvedor de software',
+  role: 'Desenvolvedor Full Stack',
   location: 'Santo Antônio de Jesus, Bahia',
-  headline: 'Sistemas, automações e experiências interativas feitos a partir de problemas reais.',
-  lead: 'Sou estudante de Análise e Desenvolvimento de Sistemas no IFBA. Desenvolvi o sistema de gestão e caixa da Olympus 3D, empresa da qual sou sócio, e no TCC construo um mod de Hytale que ensina portas lógicas.',
+  headline: 'Aplicações web, automações e IA aplicada a problemas reais.',
+  lead: 'Sou desenvolvedor Full Stack e estudante de Análise e Desenvolvimento de Sistemas no IFBA. Trabalho com TypeScript, React, Next.js e Python para conectar interfaces, APIs, dados e automações. Na Olympus 3D, empresa da qual sou sócio, desenvolvo o sistema de gestão e integro IA às tarefas de organização e edição de conteúdo.',
   description:
-    'Portfólio de Luis Ramos, desenvolvedor de software: sistema de gestão da Olympus 3D, mod educacional de portas lógicas para Hytale, automações e projetos acadêmicos.',
+    'Portfólio de Luis Ramos, desenvolvedor Full Stack: aplicações web com TypeScript, React e Next.js, Python, automações e IA aplicada. Cases da Olympus 3D, LogicGates e projetos acadêmicos.',
   /** Slug do projeto indicado como ponto de partida. */
   startWith: 'olympus-3d',
   links: {
@@ -20,7 +20,7 @@ export const profile = {
 
 export const about = {
   paragraphs: [
-    'Meu nome é Luis Guilherme Passos Ramos. Estudo Análise e Desenvolvimento de Sistemas no IFBA, campus Santo Antônio de Jesus, com foco em desenvolvimento fullstack.',
+    'Meu nome é Luis Guilherme Passos Ramos. Sou desenvolvedor Full Stack e estudante de Análise e Desenvolvimento de Sistemas no IFBA, campus Santo Antônio de Jesus. Meu foco é construir aplicações completas e integrar automações e IA a necessidades reais.',
     'Gosto de trabalho que começa em uma necessidade que dá para apontar: o caixa de uma empresa, a prova que precisa sair formatada, um conceito difícil de ensinar. O caminho até a solução costuma passar por interface, regra de negócio, banco de dados e automação, e é nesse percurso completo que eu trabalho.',
     'Fora do código, sou sócio da Olympus 3D, onde também cuido de parte da produção e do marketing, e produzo conteúdo sobre Hytale no canal SISSO. Jogos, modding e impressão 3D têm em comum o que me atrai em software: montar algo peça por peça e ver funcionar.',
   ],
