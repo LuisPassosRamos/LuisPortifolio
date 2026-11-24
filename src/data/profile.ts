@@ -71,7 +71,7 @@ export const capabilities: Capability[] = [
     title: 'Comunicação entre sistemas',
     text: 'APIs REST, tempo real e troca de mensagens entre processos.',
     evidence: [
-      { project: 'iot-management-system', note: 'REST, JWT e WebSocket' },
+      { project: 'iot-management-system', note: 'API REST, autenticação JWT e auditoria' },
       { project: 'sisd', note: 'sockets TCP, gRPC e multicast UDP' },
     ],
   },

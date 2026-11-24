@@ -237,7 +237,6 @@ export const projects: Project[] = [
       { name: 'FastAPI e Pydantic', use: 'API e validação dos dados' },
       { name: 'SQLAlchemy 2 e SQLite', use: 'modelos e persistência' },
       { name: 'JWT e bcrypt', use: 'autenticação e perfis de administrador e usuário' },
-      { name: 'WebSocket', use: 'atualização das telas em tempo real' },
       { name: 'Bootstrap 5 e Chart.js', use: 'interface web sem framework' },
       { name: 'Python e httpx', use: 'simulador de dispositivos' },
       { name: 'pytest', use: 'testes da API e dos serviços' },
@@ -247,8 +246,6 @@ export const projects: Project[] = [
       'Trabalho de curso sobre gestão de recursos com apoio de IoT. O desafio era ligar três partes independentes: uma API com regras de reserva, uma interface web e dispositivos que executam comandos.',
     ],
     contribution: ['Desenvolvi a API, a interface e o simulador de dispositivos.'],
-    attribution:
-      'O histórico tem 39 commits: 34 meus e 5 gerados por um agente automatizado de código.',
     solution: [
       {
         title: 'Reservas',
@@ -257,10 +254,6 @@ export const projects: Project[] = [
       {
         title: 'Fila de comandos',
         text: 'Travar e destravar viram comandos em uma fila. O simulador consome um por vez e informa o resultado.',
-      },
-      {
-        title: 'Tempo real',
-        text: 'Mudanças em recursos, reservas e dispositivos chegam às telas por WebSocket.',
       },
       { title: 'Auditoria', text: 'Cada ação fica registrada e pode ser exportada em CSV ou PDF.' },
     ],
@@ -271,10 +264,12 @@ export const projects: Project[] = [
         'Com isso o dispositivo pode ficar fora do ar sem que o comando se perca, e o mesmo desenho serviria a um equipamento real com conexão instável.',
       ],
     },
-    results: ['14 testes automatizados da API e dos serviços.'],
+    results: ['Testes automatizados exercitam reservas, permissões, fila de comandos e relatórios de dispositivo.'],
     state: 'Entregue como trabalho acadêmico. Sem evolução prevista.',
     limits: [
       'Os dispositivos são simulados. Não houve integração com hardware.',
+      'A demonstração usa HTTP. A rota WebSocket está no código e ainda precisa de autorização por recurso antes de ser habilitada.',
+      'A fila marca o comando como consumido quando o dispositivo o retira. A execução ainda não tem confirmação separada.',
       'Banco local e credenciais de exemplo: não é uma implantação de produção.',
     ],
     links: [
@@ -291,7 +286,6 @@ export const projects: Project[] = [
       ],
       links: [
         { from: 'web', to: 'api', label: 'HTTP com JWT' },
-        { from: 'api', to: 'web', label: 'WebSocket: eventos em tempo real' },
         { from: 'api', to: 'db', label: 'reservas, fila de comandos e auditoria' },
         { from: 'sim', to: 'api', label: 'busca comandos e envia leituras' },
       ],
@@ -339,12 +333,12 @@ export const projects: Project[] = [
         title: 'Recuperação',
         text: 'Sensores e cliente salvam checkpoints com o relógio de Lamport e voltam ao último estado ao reiniciar.',
       },
-      { title: 'Alertas', text: 'Alertas climáticos chegam a todos os nós por multicast UDP.' },
+      { title: 'Alertas', text: 'Um módulo separado emite alertas climáticos por UDP multicast para os participantes inscritos no grupo.' },
     ],
     decision: {
       title: 'Um protocolo para cada tipo de conversa',
       text: [
-        'Leituras contínuas usam TCP, que entrega em ordem. O controle entre nós, como heartbeat e eleição, usa gRPC com contrato definido em arquivos .proto.',
+        'Leituras, marcadores de snapshot e token usam TCP. Heartbeat e eleição usam gRPC com contratos definidos em arquivos .proto.',
         'Alertas precisam chegar a todos de uma vez e usam multicast UDP. A réplica recebe logs e checkpoints por HTTP.',
       ],
     },
@@ -367,7 +361,7 @@ export const projects: Project[] = [
       links: [
         { from: 'sensor', to: 'client', label: 'TCP: leituras' },
         { from: 'sensor', to: 'monitor', label: 'gRPC: heartbeat' },
-        { from: 'sensor', to: 'sensor', label: 'gRPC: eleição Bully e token' },
+        { from: 'sensor', to: 'sensor', label: 'gRPC: eleição Bully · TCP: token' },
         { from: 'sensor', to: 'cloud', label: 'HTTP: logs e checkpoints' },
         { from: 'client', to: 'cloud', label: 'HTTP: logs e checkpoints' },
       ],
