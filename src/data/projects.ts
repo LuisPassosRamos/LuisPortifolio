@@ -177,31 +177,48 @@ export const projects: Project[] = [
   },
   {
     slug: 'gerador-de-provas',
-    title: 'Gerador de provas',
+    title: 'Prova Pronta',
     subtitle: 'Automação para a rotina de uma escola',
     kind: 'Automação no estágio',
     featured: false,
     summary:
-      'Automação que recebe questões sem formatação e devolve a prova montada no padrão da escola, com o cabeçalho institucional.',
-    role: 'Estagiário de TI',
+      'Aplicação que recebe provas em Word, PDF, fotos ou texto, permite conferir as questões lado a lado com o original e gera PDF e Word no padrão da escola.',
+    role: 'Estagiário de TI e desenvolvedor da aplicação',
     period: 'Desde 2024',
-    status: 'Ferramenta interna',
-    stack: [],
+    status: 'Código público e fluxo pensado para uso interno da escola',
+    stack: [
+      { name: 'Python e FastAPI', use: 'API de importação, edição e exportação' },
+      { name: 'React e TypeScript', use: 'tela de conferência lado a lado com o original' },
+      { name: 'Tesseract', use: 'reconhecimento de texto em fotos e documentos escaneados' },
+      { name: 'python-docx e LibreOffice', use: 'diagramação em Word e conversão para PDF' },
+    ],
     context: [
       'No estágio de TI da Escola Madre Maria do Rosário de Almeida II cuido de manutenção de equipamentos, rede e automações.',
-      'As questões de uma prova chegam como texto corrido. O documento final precisa sair no modelo da escola, com cabeçalho e campos de identificação. A automação faz essa montagem.',
+      'As provas chegam em formatos diferentes, mas a impressão segue um modelo com cabeçalho e campos de identificação. A aplicação organiza o conteúdo e dá ao professor uma etapa de conferência antes da impressão.',
     ],
-    contribution: ['Identifiquei a etapa repetitiva e criei a automação que monta a prova.'],
+    contribution: [
+      'Transformei a montagem manual de provas em um fluxo de importação, conferência, diagramação e envio para a impressão.',
+      'Usei provas sintéticas para testar a extração, a estrutura das questões e a renderização de documentos.',
+    ],
     solution: [
-      { title: 'Entrada', text: 'O texto das questões, do jeito que foi escrito.' },
-      { title: 'Saída', text: 'O documento da prova com o cabeçalho da escola e as questões organizadas.' },
+      { title: 'Importação', text: 'O professor envia Word, PDF ou fotos, cola o texto ou cria questões com IA opcional.' },
+      { title: 'Conferência', text: 'O original fica ao lado das questões organizadas para revisar texto, alternativas e figuras.' },
+      { title: 'Impressão', text: 'A aplicação gera Word e PDF no modelo da escola e pode encaminhar os arquivos para a equipe de impressão.' },
     ],
-    state: 'Ferramenta de uso interno da escola.',
+    decision: {
+      title: 'Revisar o conteúdo antes de diagramar',
+      text: [
+        'A extração produz uma estrutura editável de questões, alternativas e imagens. O professor confere essa estrutura com o original antes de gerar os arquivos de impressão.',
+        'O fluxo de importação e a diagramação funcionam sem credenciais de IA. O modo de teste guarda o e-mail em uma caixa de saída local.',
+      ],
+    },
+    state: 'O repositório inclui amostras sintéticas e instruções para reproduzir o fluxo localmente.',
     limits: [
       'Por envolver documentos internos, a ilustração usa uma escola e questões fictícias.',
+      'O OCR pode precisar de revisão em fotos e fórmulas. O professor pode recortar trechos do original para preservar a aparência.',
       'Não há medição de tempo economizado.',
     ],
-    links: [],
+    links: [{ label: 'Código, instalação e amostras', href: 'https://github.com/LuisPassosRamos/testMaker' }],
     visual: 'exam-flow',
     visualCaption: 'Ilustração com escola e questões fictícias.',
   },
@@ -220,7 +237,6 @@ export const projects: Project[] = [
       { name: 'FastAPI e Pydantic', use: 'API e validação dos dados' },
       { name: 'SQLAlchemy 2 e SQLite', use: 'modelos e persistência' },
       { name: 'JWT e bcrypt', use: 'autenticação e perfis de administrador e usuário' },
-      { name: 'WebSocket', use: 'atualização das telas em tempo real' },
       { name: 'Bootstrap 5 e Chart.js', use: 'interface web sem framework' },
       { name: 'Python e httpx', use: 'simulador de dispositivos' },
       { name: 'pytest', use: 'testes da API e dos serviços' },
@@ -230,8 +246,6 @@ export const projects: Project[] = [
       'Trabalho de curso sobre gestão de recursos com apoio de IoT. O desafio era ligar três partes independentes: uma API com regras de reserva, uma interface web e dispositivos que executam comandos.',
     ],
     contribution: ['Desenvolvi a API, a interface e o simulador de dispositivos.'],
-    attribution:
-      'O histórico tem 39 commits: 34 meus e 5 gerados por um agente automatizado de código.',
     solution: [
       {
         title: 'Reservas',
@@ -240,10 +254,6 @@ export const projects: Project[] = [
       {
         title: 'Fila de comandos',
         text: 'Travar e destravar viram comandos em uma fila. O simulador consome um por vez e informa o resultado.',
-      },
-      {
-        title: 'Tempo real',
-        text: 'Mudanças em recursos, reservas e dispositivos chegam às telas por WebSocket.',
       },
       { title: 'Auditoria', text: 'Cada ação fica registrada e pode ser exportada em CSV ou PDF.' },
     ],
@@ -254,10 +264,12 @@ export const projects: Project[] = [
         'Com isso o dispositivo pode ficar fora do ar sem que o comando se perca, e o mesmo desenho serviria a um equipamento real com conexão instável.',
       ],
     },
-    results: ['14 testes automatizados da API e dos serviços.'],
+    results: ['Testes automatizados exercitam reservas, permissões, fila de comandos e relatórios de dispositivo.'],
     state: 'Entregue como trabalho acadêmico. Sem evolução prevista.',
     limits: [
       'Os dispositivos são simulados. Não houve integração com hardware.',
+      'A demonstração usa HTTP. A rota WebSocket está no código e ainda precisa de autorização por recurso antes de ser habilitada.',
+      'A fila marca o comando como consumido quando o dispositivo o retira. A execução ainda não tem confirmação separada.',
       'Banco local e credenciais de exemplo: não é uma implantação de produção.',
     ],
     links: [
@@ -274,7 +286,6 @@ export const projects: Project[] = [
       ],
       links: [
         { from: 'web', to: 'api', label: 'HTTP com JWT' },
-        { from: 'api', to: 'web', label: 'WebSocket: eventos em tempo real' },
         { from: 'api', to: 'db', label: 'reservas, fila de comandos e auditoria' },
         { from: 'sim', to: 'api', label: 'busca comandos e envia leituras' },
       ],
@@ -322,12 +333,12 @@ export const projects: Project[] = [
         title: 'Recuperação',
         text: 'Sensores e cliente salvam checkpoints com o relógio de Lamport e voltam ao último estado ao reiniciar.',
       },
-      { title: 'Alertas', text: 'Alertas climáticos chegam a todos os nós por multicast UDP.' },
+      { title: 'Alertas', text: 'Um módulo separado emite alertas climáticos por UDP multicast para os participantes inscritos no grupo.' },
     ],
     decision: {
       title: 'Um protocolo para cada tipo de conversa',
       text: [
-        'Leituras contínuas usam TCP, que entrega em ordem. O controle entre nós, como heartbeat e eleição, usa gRPC com contrato definido em arquivos .proto.',
+        'Leituras, marcadores de snapshot e token usam TCP. Heartbeat e eleição usam gRPC com contratos definidos em arquivos .proto.',
         'Alertas precisam chegar a todos de uma vez e usam multicast UDP. A réplica recebe logs e checkpoints por HTTP.',
       ],
     },
@@ -335,7 +346,7 @@ export const projects: Project[] = [
     limits: [
       'Tudo roda em contêineres na mesma máquina. Não foi testado em rede real.',
       'A autenticação com RSA é básica e serve apenas à demonstração.',
-      'O repositório não tem testes automatizados.',
+      'Os testes automatizados cobrem o serviço de réplica HTTP. A comunicação, a eleição e a recuperação entre os nós são exercitadas na execução com Docker.',
     ],
     links: [{ label: 'Código no GitHub', href: 'https://github.com/LuisPassosRamos/TrabalhoFinalSD' }],
     visual: 'system',
@@ -350,7 +361,7 @@ export const projects: Project[] = [
       links: [
         { from: 'sensor', to: 'client', label: 'TCP: leituras' },
         { from: 'sensor', to: 'monitor', label: 'gRPC: heartbeat' },
-        { from: 'sensor', to: 'sensor', label: 'gRPC: eleição Bully e token' },
+        { from: 'sensor', to: 'sensor', label: 'gRPC: eleição Bully · TCP: token' },
         { from: 'sensor', to: 'cloud', label: 'HTTP: logs e checkpoints' },
         { from: 'client', to: 'cloud', label: 'HTTP: logs e checkpoints' },
       ],

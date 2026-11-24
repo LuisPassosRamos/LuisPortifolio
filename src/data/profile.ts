@@ -71,7 +71,7 @@ export const capabilities: Capability[] = [
     title: 'Comunicação entre sistemas',
     text: 'APIs REST, tempo real e troca de mensagens entre processos.',
     evidence: [
-      { project: 'iot-management-system', note: 'REST, JWT e WebSocket' },
+      { project: 'iot-management-system', note: 'API REST, autenticação JWT e auditoria' },
       { project: 'sisd', note: 'sockets TCP, gRPC e multicast UDP' },
     ],
   },
@@ -79,7 +79,7 @@ export const capabilities: Capability[] = [
     title: 'Automação e IA aplicada',
     text: 'Etapas repetitivas viram fluxo automático. IA entra onde ajuda, com alternativa quando não está disponível.',
     evidence: [
-      { project: 'gerador-de-provas', note: 'prova montada a partir de texto sem formatação' },
+      { project: 'gerador-de-provas', note: 'importação de documentos, OCR e conferência antes da impressão' },
       { project: 'olympus-3d', note: 'Gemini opcional, com organizador por regras' },
     ],
   },
